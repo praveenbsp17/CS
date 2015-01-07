@@ -9,6 +9,8 @@
                 <!-- Content Header (Page header) -->
 				<?php
 				/*---- creating bread crumbs----- */
+				$b2Title = '';
+				$op = '';
 				if(isset($_GET['op']) && $_GET['op']!="")
 				{
 				  switch($_GET['op'])
@@ -24,6 +26,16 @@
 					case 'polls':
 					$pageHeading = 'Polls';
 					$b1Title = 'Polls';
+					break;
+					case 'poll_votes':
+					$polls =$Database->fetch_values("select * from polls where id = '".$_GET['pid']."'");
+			        if(count($polls) > 0)
+			        {
+					  $pageHeading = "Votes for ".$polls[0]['question'];
+					  $b1Title = 'Polls';
+					  $b2Title = $pageHeading;
+					  $op = 'polls';	
+					}					
 					break;
 					case 'admin':
 					$pageHeading = 'Administrators';
@@ -42,6 +54,7 @@
 					$b2Title = 'Edit '.substr($b1Title,0,-1);
 					break;
 				   }
+				   $op = $_GET['op'];
 				  }
 					
 					$body = $_GET['op'];
@@ -68,9 +81,9 @@
 						<a href="index.php?op=main"><i class="fa fa-dashboard"></i> Home</a>
 					  </li>
 					  <?php
-					  if(isset($_GET['Action']))
+					  if(isset($_GET['Action']) || $b2Title!="")
 					  {?>
-                       <li><a href="index.php?op=<?php echo $_GET['op'];?>"><?php echo $b1Title;?></a></li>
+                       <li><a href="index.php?op=<?php echo $op;?>"><?php echo $b1Title;?></a></li>
 					   <li class="active"><?php echo $b2Title;?></li>
 					  <?php
 					  }
