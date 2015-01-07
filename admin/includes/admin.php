@@ -181,7 +181,8 @@ else
 	 <?php
 	 }?>
 	 <div class="box-body table-responsive">
-	    <div><button id="addButton" class="btn btn-primary pull-right">Add</button></div>
+	    <div><button id="addButton" class="btn btn-primary pull-right" title="Add New Admin/Content Writer" data-placement="bottom" data-toggle="tooltip">
+		 <i class="fa fa-plus-square"></i>&nbsp;Add</button></div>
 		<table id="adminData" class="table table-bordered table-striped">
 			<thead>
 				<tr>
@@ -236,11 +237,14 @@ else
   					  } ?>
 					  </td>
 					  <td>
-					  <a href='index.php?op=admin&Action=Edit&aid=<?=$admin['id']?>'><img src="images/edit.gif" border='0'/></a>
+					  <a title="Edit Details" data-placement="bottom" data-toggle="tooltip" href='index.php?op=admin&Action=Edit&aid=<?=$admin['id']?>'>
+					   <i class="fa fa-pencil-square-o fa-lg"></i>
+					  </a>
 					  <?php
 					  if($admin['id']>1)
 					  {?>					  
-					  &nbsp;&nbsp;<a href='index.php?op=admin&Action=Delete&aid=<?=$admin['id']?>'><img src="images/delete.gif" border='0' onclick="return confirm('Are you sure')"/></a>
+					  &nbsp;&nbsp;<a title="Remove" data-placement="bottom" data-toggle="tooltip"  href='index.php?op=admin&Action=Delete&aid=<?=$admin['id']?>' onclick="return confirm('Are you sure')">
+					  <i class="fa fa-times fa-lg"></i></a>
 					  <?php
 					  }
 					  ?>
