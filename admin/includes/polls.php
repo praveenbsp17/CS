@@ -178,7 +178,10 @@ else
 	 <?php
 	 }?>
 	 <div class="box-body table-responsive">
-	    <div class="col-md-12 padding-right-none margin-bottom-5"><button id="addButton" class="btn btn-primary pull-right">Add</button></div>
+	    <div class="col-md-12 padding-right-none margin-bottom-5">
+		 <button id="addButton" class="btn btn-primary pull-right" title="Add Poll" data-placement="bottom" data-toggle="tooltip">
+		 <i class="fa fa-plus-square"></i>&nbsp;Add</button>
+		</div>
 		<table id="pollsData" class="table table-bordered table-striped">
 			<thead>
 				<tr>
@@ -221,29 +224,22 @@ else
 					  <td><?php echo $poll['option4'];?></td>
 					  <td><?php echo date("d-m-Y",strtotime($poll['createddate']));?></td>
 					  <td>
-					  <?php
-					  if($poll['id']>1)
-					  {?>
-					  <a href='index.php?op=polls&pid=<?=$poll['id']?>&status=<?php echo $sval;?>'>					  
-					  <?php echo $status;?>
-					  </a>
-					  <?php
-					  }
-					  else
-					  {
-						echo $status;
-  					  } ?>
+					    <a href='index.php?op=polls&pid=<?=$poll['id']?>&status=<?php echo $sval;?>'>					  
+					     <?php echo $status;?>
+					     </a>				  
 					  </td>
 					  <td>
-					  <a href='index.php?op=polls&Action=Edit&pid=<?=$poll['id']?>'><img src="images/edit.gif" border='0'/></a>
-					  <?php
-					  if($poll['id']>1)
-					  {?>					  
-					  &nbsp;&nbsp;<a href='index.php?op=poll&Action=Delete&pid=<?=$poll['id']?>'><img src="images/delete.gif" border='0' onclick="return confirm('Are you sure')"/></a>
-					  <?php
-					  }
-					  ?>
-				    </td>
+					  <a title="View Poll Results" data-placement="bottom" data-toggle="tooltip" href='index.php?op=polls&Action=Edit&pid=<?=$poll['id']?>'>
+					    <i class="fa fa-list-alt fa-lg"></i>
+					  </a>
+					   &nbsp;&nbsp;
+					  <a title="Edit Poll" data-placement="bottom" data-toggle="tooltip" href='index.php?op=polls&Action=Edit&pid=<?=$poll['id']?>'>
+					    <i class="fa fa-pencil-square-o fa-lg"></i>
+					  </a>
+					  &nbsp;
+					  <a title="Remove Poll" data-placement="bottom" data-toggle="tooltip" href='index.php?op=poll&Action=Delete&pid=<?=$poll['id']?>' onclick="return confirm('Are you sure')">
+					    <i class="fa fa-times fa-lg"></i></a>
+					   </td>
 					</tr>
 			 
 			 <?php
@@ -276,6 +272,8 @@ $(function() {
 	  var url = $(location).attr('href')+'&Action=Add';
 	  $(location).attr('href',url)
 	});
+	
+	$('[data-toggle="tooltip"]').tooltip();
 	
 });
 </script>
