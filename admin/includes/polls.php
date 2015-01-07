@@ -224,7 +224,7 @@ else
 					  <td><?php echo $poll['option4'];?></td>
 					  <td><?php echo date("d-m-Y",strtotime($poll['createddate']));?></td>
 					  <td>
-					    <a href='index.php?op=polls&pid=<?=$poll['id']?>&status=<?php echo $sval;?>'>					  
+					    <a title="Change Status" data-placement="bottom" data-toggle="tooltip" href='index.php?op=polls&pid=<?=$poll['id']?>&status=<?php echo $sval;?>'>					  
 					     <?php echo $status;?>
 					     </a>				  
 					  </td>
