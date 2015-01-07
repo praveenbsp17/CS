@@ -73,6 +73,12 @@ if($_SESSION['admin_login']!='loggedin')
 		<script src="template/js/plugins/bootstrapvalidator/js/bootstrapValidator.min.js" type="text/javascript"></script>  
          <!-- AdminLTE App -->
         <script src="template/js/AdminLTE/app.js" type="text/javascript"></script>
+		<script type="text/javascript">
+		$(function() {
+			 <!-- for tooltips -->
+			 $('[data-toggle="tooltip"]').tooltip();
+		});
+		</script>	
     </head>
     <body class="skin-blue">
         <!-- header logo: style can be found in header.less -->
