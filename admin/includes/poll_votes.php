@@ -19,6 +19,15 @@ if(isset($_GET['status']) && $_GET['status']!="")
 	exit();
 
 }
+if(count($polls)==0)
+{
+	$polls[0]['question'] = '';
+	$polls[0]['option1'] = '';
+	$polls[0]['option2'] = '';
+	$polls[0]['option3'] = '';
+	$polls[0]['option4'] = '';
+}
+
 ?>
 <div class="box">
 	<div class="box-body table-responsive">
