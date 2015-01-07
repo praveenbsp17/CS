@@ -25,6 +25,11 @@
                                 <i class="fa fa-arrow-circle-right"></i> <span>Articles</span> 
                             </a>
                         </li>
+						<li <?php if($_GET['op'] == 'polls') { ?>class="active" <?php } ?>>
+                            <a href="index.php?op=polls">
+                                <i class="fa fa-arrow-circle-right"></i> <span>Polls</span> 
+                            </a>
+                        </li>
                         <li <?php if($_GET['op'] == 'admin') { ?>class="active" <?php } ?>>
                             <a href="index.php?op=admin">
                                 <i class="fa fa-arrow-circle-right"></i> <span>Admins</span> 
