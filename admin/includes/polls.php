@@ -164,10 +164,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 else
 { ?>
 	<div class="box">
-	  <div class="box-header padding-bottom-10">
-		<h3 class="box-title">Polls</h3>
-	  </div><!-- /.box-header -->
-	  <?php
+	   <?php
 	  if(isset($_GET['sucess']) &&  $_GET['sucess'] == 'yes')
 	  {?>
 	  <div class="alert alert-success alert-dismissable">
@@ -229,7 +226,7 @@ else
 					     </a>				  
 					  </td>
 					  <td>
-					  <a title="View Poll Results" data-placement="bottom" data-toggle="tooltip" href='index.php?op=polls&Action=Edit&pid=<?=$poll['id']?>'>
+					  <a title="View Poll Results" data-placement="bottom" data-toggle="tooltip" href='index.php?op=poll_votes&pid=<?=$poll['id']?>'>
 					    <i class="fa fa-list-alt fa-lg"></i>
 					  </a>
 					   &nbsp;&nbsp;
@@ -237,7 +234,7 @@ else
 					    <i class="fa fa-pencil-square-o fa-lg"></i>
 					  </a>
 					  &nbsp;
-					  <a title="Remove Poll" data-placement="bottom" data-toggle="tooltip" href='index.php?op=poll&Action=Delete&pid=<?=$poll['id']?>' onclick="return confirm('Are you sure')">
+					  <a title="Remove Poll" data-placement="bottom" data-toggle="tooltip" href='index.php?op=polls&Action=Delete&pid=<?=$poll['id']?>' onclick="return confirm('Are you sure')">
 					    <i class="fa fa-times fa-lg"></i></a>
 					   </td>
 					</tr>
@@ -272,8 +269,6 @@ $(function() {
 	  var url = $(location).attr('href')+'&Action=Add';
 	  $(location).attr('href',url)
 	});
-	
-	$('[data-toggle="tooltip"]').tooltip();
 	
 });
 </script>
