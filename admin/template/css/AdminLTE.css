@@ -3537,3 +3537,13 @@ fieldset[disabled] .btn-vk.active {
 .padding-bottom-10 {
   padding-bottom : 10px;
 }
+
+.padding-right-none
+{
+  padding-right	: 0px !important;
+}
+
+.margin-bottom-5
+{
+  margin-bottom : 5px !important;
+}
