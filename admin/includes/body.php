@@ -21,6 +21,10 @@
 					$pageHeading = 'Articles';
 					$b1Title = 'Articles';
 					break;
+					case 'polls':
+					$pageHeading = 'Polls';
+					$b1Title = 'Polls';
+					break;
 					case 'admin':
 					$pageHeading = 'Administrators';
 					$b1Title = 'Admins';
@@ -32,10 +36,10 @@
 					switch($_GET['Action'])
 				   {
 					case 'Add':
-					$b2Title = 'Add Admin';
+					$b2Title = 'Add '.substr($b1Title,0,-1);
 					break;
 					case 'Edit':
-					$b2Title = 'Edit Admin';
+					$b2Title = 'Edit '.substr($b1Title,0,-1);
 					break;
 				   }
 				  }
