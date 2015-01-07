@@ -226,7 +226,7 @@ else
 					  <?php
 					  if($admin['id']>1)
 					  {?>
-					  <a href='index.php?op=admin&aid=<?=$admin['id']?>&status=<?php echo $sval;?>'>					  
+					  <a title="Change Status" data-placement="bottom" data-toggle="tooltip" href='index.php?op=admin&aid=<?=$admin['id']?>&status=<?php echo $sval;?>'>					  
 					  <?php echo $status;?>
 					  </a>
 					  <?php
