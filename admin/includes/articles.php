@@ -1,17 +1,23 @@
 <?php
 ob_start();
+$categories = array("News","Politics","Gossips","Reviews");
 // Adding or updating Articles
 if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']))
 {
 	if(($_POST['username']!="")&&($_POST['password']!="")&&($_POST['email']!=""))
 	{
-		$nwarr['username'] = $_POST['username'];
-		$nwarr['password'] = $_POST['password'];
-		$nwarr['email'] = $_POST['email'];
-		$nwarr['article_type'] = $_POST['articleType'];	
+		$nwarr['title'] = $_POST['title'];
+	    $nwarr['page_url'] = $articlesData['page_url'];
+	    $nwarr['category'] = $articlesData['category'];
+	    $nwarr['article_content'] = $articlesData['article_content'];
+		$nwarr['article_img'] = $articlesData['article_img'];
+		$nwarr['meta_keywords'] = $articlesData['meta_keywords'];
+		$nwarr['meta_description'] = $articlesData['meta_description'];
 		// checking whether the articles added updated
 		if(isset($_POST['article_id']) && $_POST['article_id']!="")
 		{
+			$nwarr['modifieddate'] = date('Y-m-d H:i:s');
+			$nwarr['modifiedby'] = $_SESSION['aid'];		
 			$action = 'Edit';
 			$wcon = " where id = ".$_POST['article_id'];
 			$lid=$Database->Update($nwarr,"articles",$wcon);
@@ -19,8 +25,8 @@ if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email
 		}
 		else
 		{
-			$action = 'Edit';
-			$nwarr['createddate'] = date('Y-m-d');	
+			$nwarr['createddate'] = date('Y-m-d H:i:s');
+			$nwarr['createdby'] = $_SESSION['aid'];		
 			$nwarr['status'] = 1;
 			$lid=$Database->insertuser($nwarr,"articles");
 			if($lid>0)
@@ -73,23 +79,29 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 	 $articlesData = array_shift($articles);
 	 $heading = 'Edit Articles Details';
 	 $buttonText = 'Save';
-	 $username = $articlesData['username'];
-	 $password = $articlesData['apass'];
-	 $email = $articlesData['email'];
-	 $articlesType = $articlesData['articles_type'];
+	 $title = $articlesData['title'];
+	 $pageUrl = $articlesData['page_url'];
+	 $acategory = $articlesData['category'];
+	 $content = $articlesData['article_content'];
+	 $articleImg = $articlesData['article_img'];
+	 $metaKeywords = $articlesData['meta_keywords'];
+	 $metaDesc = $articlesData['meta_description'];
+	 
   }
   else
   {
 	$heading = 'Add Article';
 	$buttonText = 'Add';
-	$username = '';
-	$password = '';
-	$email = '';
-	$articlesType = '';
+	$title = '';
+	$pageUrl = '';
+	$acategory = '';
+	$content = '';
+	$articleImg = '';
+	$metaKeywords = '';
+	$metaDesc = '';
   }
 ?>
-<div class="col-md-3">&nbsp;</div>
-  <div class="col-md-6">	
+  <div class="col-md-12">	
 	<div class="box box-primary">
 	<div class="box-header">
 		<h3 class="box-title"><?php echo $heading;?></h3>
@@ -120,32 +132,50 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 	<form id="articlesForm" action="index.php?op=articles" method="post"  role="form">
 		<div class="box-body">
 			<div class="form-group">
-				<label for="exampleInputEmail1">Username</label>
-				<input type="text" name="username" class="form-control" placeholder="Enter Username" value="<?php echo $username;?>" data-bv-notempty data-bv-notempty-message="User name is required">
+				<label for="exampleInputTitle">Title</label>
+				<input type="text" name="title" class="form-control" placeholder="Enter Title" value="<?php echo $title;?>" data-bv-notempty data-bv-notempty-message="Article Title is required">
 			</div>
 			<div class="form-group">
-				<label for="exampleInputPassword1">Password</label>
-				<input type="password" name="password" class="form-control" placeholder="Password" value="<?php echo $password;?>" data-bv-notempty data-bv-notempty-message="Password is required">
+				<label for="exampleInputPageUrl">Page Url</label>
+				<input type="text" name="pageurl" class="form-control" placeholder="Page Url" value="<?php echo $pageUrl;?>" data-bv-notempty data-bv-notempty-message="page Url is required">
 			</div>	
 			<div class="form-group">
-				<label for="exampleInputEmail1">Email ID</label>
-				<input type="email" name="email" class="form-control" placeholder="Enter Email ID" value="<?php echo $email;?>" data-bv-notempty data-bv-notempty-message="Email ID is required" data-bv-emailaddress="true" data-bv-emailaddress-message="Please enter valid Email ID">
+				<label>Select</label>
+				<select name="category" class="form-control" data-bv-notempty data-bv-notempty-message="Select Category">
+				   <option value="">Select Category</option>
+				   <?php
+				    foreach($categories as $category)
+					{
+						if($category == $acategory)
+						{
+						  $sel = "";	
+						}
+						else
+						{
+						 $sel = "";	
+						}
+					?>
+					   <option value="<?php echo $category;?>" <?php echo $sel;?>><?php echo $category;?></option>
+					<?php
+					}
+					?>		
+				</select>
 			</div>
 			<div class="form-group">
-				<label>Select</label>
-				<select name="articlesType" class="form-control">
-				    <?php
-					if($articlesType == 'articles')
-					{ ?>
-						<option value="articles">articles</option>
-						<option value="Content Writer">Content Writer</option>
-					<?php }
-					else
-					{ ?>
-						<option value="Content Writer">Content Writer</option>
-						<option value="articles">articles</option>
-				<?php }	?>				
-				</select>
+				<label for="exampleInputContent">Content</label>
+				<textarea id="content" name="title" class="form-control" placeholder="Enter Article Content" data-bv-notempty data-bv-notempty-message="Article Content is required"><?php echo $content;?></textarea>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputMetaKeywords">Meta Keywords</label>
+				<textarea rows="3" name="metaKeywords" class="form-control" placeholder="Enter Meta Keywords" data-bv-notempty data-bv-notempty-message="Meta Keywords is required"><?php echo $metaKeywords;?></textarea>
+			</div>
+			<div class="form-group">
+				<label for="exampleInputMetaDescription">Meta Description</label>
+				<textarea rows="3" name="metaDesc" class="form-control" placeholder="Enter Meta Description" data-bv-notempty data-bv-notempty-message="Meta Description is required"><?php echo $metaDesc;?></textarea>
+			</div>
+			<div class="form-group">
+				<label for="articleImg">Article Image</label>
+				<input type="file" id="articleImg">				
 			</div>	
 		</div><!-- /.box-body -->
 
@@ -161,16 +191,13 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 	</form>
 	</div>
  </div>
- <div class="col-md-3">&nbsp;</div>
+ 
 	
 <?php }
 else
 { ?>
 	<div class="box">
-	  <div class="box-header padding-bottom-10">
-		<h3 class="box-title">Articles</h3>
-	  </div><!-- /.box-header -->
-	  <?php
+	 <?php
 	  if(isset($_GET['sucess']) &&  $_GET['sucess'] == 'yes')
 	  {?>
 	  <div class="alert alert-success alert-dismissable">
@@ -181,13 +208,15 @@ else
 	 <?php
 	 }?>
 	 <div class="box-body table-responsive">
-	    <div><button id="addButton" class="btn btn-primary pull-right">Add</button></div>
+	    <div class="col-md-12 padding-right-none margin-bottom-5">
+		 <button id="addButton" class="btn btn-primary pull-right" title="Add Article" data-placement="bottom" data-toggle="tooltip">
+		 <i class="fa fa-plus-square"></i>&nbsp;Add</button>
+		</div>
 		<table id="articlesData" class="table table-bordered table-striped">
 			<thead>
 				<tr>
 				  <th>Sno</th>
 				  <th>Title</th>
-				  <th>Content</th>
 				  <th>Category</th>
 				  <th>Type</th>
 				  <th>Created Date</th>
@@ -217,30 +246,22 @@ else
 					<tr>
 					  <td><?php echo $i;?></td>
 					  <td><?php echo $article['article_title'];?></td>
-					  <td><?php echo $article['article_content'];?></td>
-					  <td><?php echo $article['email'];?></td>
-					  <td><?php echo $article['articles_type'];?></td>
-					  <td><?php echo date("d-m-Y",strtotime($article['created_date']));?></td>
+					  <td><?php echo $article['category'];?></td>
+					  <td><?php echo date("d-m-Y H:i:s",strtotime($article['created_date']));?></td>
 					  <td>
-					  <?php
-					  if($article['id']>1)
-					  {?>
-					  <a href='index.php?op=articles&aid=<?=$article['id']?>&status=<?php echo $sval;?>'>					  
+					  <a title="Change Status" data-placement="bottom" data-toggle="tooltip" href='index.php?op=articles&aid=<?=$article['id']?>&status=<?php echo $sval;?>'>					  
 					  <?php echo $status;?>
 					  </a>
-					  <?php
-					  }
-					  else
-					  {
-						echo $status;
-  					  } ?>
 					  </td>
 					  <td>
-					  <a href='index.php?op=articles&Action=Edit&aid=<?=$article['id']?>'><img src="images/edit.gif" border='0'/></a>
+					  <a title="Edit Article" data-placement="bottom" data-toggle="tooltip" href='index.php?op=articles&Action=Edit&aid=<?=$article['id']?>'>
+					  <i class="fa fa-pencil-square-o fa-lg"></i></a>
 					  <?php
 					  if($article['id']>1)
 					  {?>					  
-					  &nbsp;&nbsp;<a href='index.php?op=articles&Action=Delete&aid=<?=$article['id']?>'><img src="images/delete.gif" border='0' onclick="return confirm('Are you sure')"/></a>
+					  &nbsp;
+					  <a title="Remove Article" data-placement="bottom" data-toggle="tooltip" href='index.php?op=articles&Action=Delete&aid=<?=$article['id']?>' onclick="return confirm('Are you sure')">
+					  <i class="fa fa-times fa-lg"></i></a>
 					  <?php
 					  }
 					  ?>
@@ -250,12 +271,6 @@ else
 			 <?php
 			    $i++;}
 			 }
-			 else
-			 {
-			 ?>
-				<tr><td colspan='8' align='center'><strong>No Articles available...</strong></td></tr>
-			 <?php
-			 }
 			 ?>
 			</tbody>
         </table>			
@@ -264,7 +279,8 @@ else
 
 	 
 <?php } ?> 
-
+<!-- CK Editor -->
+<script src="template/js/plugins/ckeditor/ckeditor.js" type="text/javascript"></script>
 <script type="text/javascript">
 $(function() {
 	$('#articlesData').dataTable({
@@ -282,6 +298,11 @@ $(function() {
 	  var url = $(location).attr('href')+'&Action=Add';
 	  $(location).attr('href',url)
 	});
+	
+	// Replace the <textarea id="content"> with a CKEditor
+    // instance, using default configuration.
+    CKEDITOR.replace('content');
+	
 });
 </script>
 	
