@@ -1,41 +1,86 @@
 <?php
 ob_start();
-$categories = array("News","Politics","Gossips","Reviews");
+$categories = array("Movies","Politics","Gossips","Reviews");
 // Adding or updating Articles
-if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']))
+if(isset($_POST['title']) && isset($_POST['pageurl']) && isset($_POST['category']) && isset($_POST['metaKeywords']) && isset($_POST['metaDesc']))
 {
-	if(($_POST['username']!="")&&($_POST['password']!="")&&($_POST['email']!=""))
+	if($_POST['title']!="" && $_POST['pageurl']!="" && $_POST['category']!="" && $_POST['content']!="" && $_POST['metaKeywords']!="" && $_POST['metaDesc']!="")
 	{
-		$nwarr['title'] = $_POST['title'];
-	    $nwarr['page_url'] = $articlesData['page_url'];
-	    $nwarr['category'] = $articlesData['category'];
-	    $nwarr['article_content'] = $articlesData['article_content'];
-		$nwarr['article_img'] = $articlesData['article_img'];
-		$nwarr['meta_keywords'] = $articlesData['meta_keywords'];
-		$nwarr['meta_description'] = $articlesData['meta_description'];
+		ini_set('max_execution_time', 600);
+		
+		$nwarr['article_title'] = $_POST['title'];
+	    $nwarr['page_url'] = $_POST['pageurl'];
+	    $nwarr['category'] = $_POST['category'];
+	    $nwarr['article_content'] = $_POST['content'];		
+		$nwarr['meta_keywords'] = $_POST['metaKeywords'];
+		$nwarr['meta_description'] = $_POST['metaDesc'];
+		
+		// image uploading
+		$imgError = '';			
+		if(isset($_FILES["articleImg"]["name"]) && $_FILES["articleImg"]["name"]!="")
+		{
+			$target_dir = "../uploads/articles/";
+			$target_file_name = basename($_FILES["articleImg"]["name"]);
+			$imageFileData = pathinfo($target_file_name);
+			$imageFileType = pathinfo($target_file_name,PATHINFO_EXTENSION);
+			$newFileName = $imageFileData['filename']."_".time().".".$imageFileData['extension'];
+			$target_file = $target_dir . $newFileName;			
+			// Check if image file is a actual image or fake image
+			$check = getimagesize($_FILES["articleImg"]["tmp_name"]);
+			if($check !== false) 
+			{
+				// Check file size
+				if ($_FILES["articleImg"]["size"] <= 10485760) 
+				{
+					// Allow certain file formats
+					if($imageFileType == "jpg" || $imageFileType == "png" || $imageFileType == "jpeg" || $imageFileType == "gif" ) 
+					{
+					   if (!move_uploaded_file($_FILES["articleImg"]["tmp_name"], $target_file)) 
+					   {
+						 $imgError = "error";
+					   }	
+					}
+					else
+				    { 
+					   $imgError = "format";
+				    }	
+				}
+				else
+				{
+					$imgError = "size";
+				}
+				
+			} 
+			else 
+			{
+				$imgError = "type";
+			}
+			$nwarr['article_img'] = $newFileName;
+		}	
+		
 		// checking whether the articles added updated
 		if(isset($_POST['article_id']) && $_POST['article_id']!="")
 		{
-			$nwarr['modifieddate'] = date('Y-m-d H:i:s');
-			$nwarr['modifiedby'] = $_SESSION['aid'];		
+			$nwarr['modified_date'] = date('Y-m-d H:i:s');
+			$nwarr['modified_by'] = $_SESSION['aid'];		
 			$action = 'Edit';
 			$wcon = " where id = ".$_POST['article_id'];
 			$lid=$Database->Update($nwarr,"articles",$wcon);
-			header("location: index.php?op=articles&sucess=yes");
+			header("location: index.php?op=articles&sucess=yes&ierror=".$imgError);
 		}
 		else
 		{
-			$nwarr['createddate'] = date('Y-m-d H:i:s');
-			$nwarr['createdby'] = $_SESSION['aid'];		
+			$nwarr['created_date'] = date('Y-m-d H:i:s');
+			$nwarr['created_by'] = $_SESSION['aid'];		
 			$nwarr['status'] = 1;
 			$lid=$Database->insertuser($nwarr,"articles");
 			if($lid>0)
 			{
-			  header("location:index.php?op=articles&sucess=yes");
+			  header("location:index.php?op=articles&sucess=yes&ierror=".$imgError);
 			}
 			else 
 			{
-			  header("location:index.php?op=articles&Action=Add&error=yes");
+			  header("location:index.php?op=articles&Action=Add&error=yes&ierror=".$imgError);
 			}
 		}	
 		
@@ -43,7 +88,7 @@ if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email
 	}
 	else
 	{
-		header("location:index.php?op=articles&Action=".$action."&error=empty");
+		header("location:index.php?op=articles&Action=Add&error=empty");
 		exit();
 	}
 }
@@ -79,7 +124,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 	 $articlesData = array_shift($articles);
 	 $heading = 'Edit Articles Details';
 	 $buttonText = 'Save';
-	 $title = $articlesData['title'];
+	 $title = $articlesData['article_title'];
 	 $pageUrl = $articlesData['page_url'];
 	 $acategory = $articlesData['category'];
 	 $content = $articlesData['article_content'];
@@ -107,7 +152,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 		<h3 class="box-title"><?php echo $heading;?></h3>
 	</div><!-- /.box-header -->
 	<?php
-	  if(isset($_GET['error'])) 
+	  if((isset($_GET['error'])) || (isset($_GET['ierror']) && $_GET['ierror']!="")) 
 	  {	    
 	  ?>
 	  <div class="alert alert-danger alert-dismissable">
@@ -115,21 +160,41 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 		<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
 		<b>Alert!</b>
 		<?php	
-		if($_GET['error'] == "empty")
+		if(isset($_GET['error']) && $_GET['error'] == "empty")
 		{?>
 			Fields Should not be Empty
 		<?php
 		}
-		else if($_GET['error'] == "yes")
+		else if(isset($_GET['error']) && $_GET['error'] == "yes")
 		{?>
 			Error Occured While Saving, Please try again
 		<?php
-		}?>
+		}
+		if(isset($_GET['ierror']) && $_GET['ierror']!="")
+		{
+			switch($_GET['ierror'])
+			{
+			  case 'error':
+			    echo "Sorry, there was an error uploading your file.";
+			   break;
+			  case 'format':
+			     echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+			   break;
+              case 'size':
+			     echo "Sorry, your file is too large.";
+			   break;
+			  case 'type':
+			     echo "Uploaded file is not an image.";
+			   break;			  	
+			}
+		}
+		?>
+		
 	 </div>
 	 <?php
 	 }?>
 	<!-- form start -->
-	<form id="articlesForm" action="index.php?op=articles" method="post"  role="form">
+	<form id="articlesForm" action="index.php?op=articles" method="post"  role="form" enctype="multipart/form-data">
 		<div class="box-body">
 			<div class="form-group">
 				<label for="exampleInputTitle">Title</label>
@@ -148,7 +213,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 					{
 						if($category == $acategory)
 						{
-						  $sel = "";	
+						  $sel = "selected='selected'";	
 						}
 						else
 						{
@@ -163,7 +228,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 			</div>
 			<div class="form-group">
 				<label for="exampleInputContent">Content</label>
-				<textarea id="content" name="title" class="form-control" placeholder="Enter Article Content" data-bv-notempty data-bv-notempty-message="Article Content is required"><?php echo $content;?></textarea>
+				<textarea id="content" name="content" class="form-control" placeholder="Enter Article Content"><?php echo $content;?></textarea>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputMetaKeywords">Meta Keywords</label>
@@ -175,7 +240,35 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 			</div>
 			<div class="form-group">
 				<label for="articleImg">Article Image</label>
-				<input type="file" id="articleImg">				
+				<?php
+				if($_GET['Action']=='Edit')
+				{
+				    if($articleImg !="")
+					{
+						$aImg = $articleImg;
+					}
+					else
+					{
+					   $aImg = 'no-image.gif';	
+					}	
+				?>
+			      <div id="imageDiv" style="height:75px;">
+				   <div class="margin-bottom-5" style="float:left;width:90px;border:1px solid #ccc;">
+				    <img id="articleImage" src="../uploads/articles/<?php echo $aImg;?>" width="90" height="64" />
+				   </div>
+				   <?php
+				   if($articleImg!="")
+				   {?> 	   
+				   <div class="margin-bottom-5" style="float:left;width:90px;padding-left:10px">
+				    <button class="btn btn-small btn-danger" name="deleteImage" id="deleteImage">Delete</button>
+				   </div>
+				   <?php
+				   }?>
+                  </div> 				   
+				<?php
+				}
+				?>				
+				<input name="articleImg" type="file" id="articleImg">				
 			</div>	
 		</div><!-- /.box-body -->
 
@@ -183,7 +276,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 		    <?php 
 			if(($_GET['Action']=='Edit')&&($_GET['aid']>0))
 			{?>
-				<input type="hidden" readonly="true" name="articles_id" value="<?php echo $_GET['aid'];?>" />
+				<input type="hidden" readonly="true" name="article_id" value="<?php echo $_GET['aid'];?>" />
 			<?php
 			}?>
 			<input type="submit" name="Submit" value="<?php echo $buttonText;?>" class="btn bg-olive btn-block">
@@ -216,9 +309,9 @@ else
 			<thead>
 				<tr>
 				  <th>Sno</th>
+				  <th>Image</th>
 				  <th>Title</th>
 				  <th>Category</th>
-				  <th>Type</th>
 				  <th>Created Date</th>
 				  <th>Status</th>
 				  <th>Action</th>
@@ -242,9 +335,18 @@ else
 						$status = 'Inactive';
 						$sval = 1;
 					}
+					if($article['article_img'] !="")
+					{
+						$articleImg = $article['article_img'];
+					}
+					else
+					{
+						$articleImg = 'no-image.gif';
+					}
 			 ?>
 					<tr>
 					  <td><?php echo $i;?></td>
+					  <td><img src="../uploads/articles/<?php echo $articleImg;?>" width="90" height="64" /></td>
 					  <td><?php echo $article['article_title'];?></td>
 					  <td><?php echo $article['category'];?></td>
 					  <td><?php echo date("d-m-Y H:i:s",strtotime($article['created_date']));?></td>
@@ -297,12 +399,31 @@ $(function() {
 	$("#addButton").click(function(){
 	  var url = $(location).attr('href')+'&Action=Add';
 	  $(location).attr('href',url)
-	});
+	});	
 	
-	// Replace the <textarea id="content"> with a CKEditor
-    // instance, using default configuration.
-    CKEDITOR.replace('content');
-	
+	 <?php 
+	if(isset($_GET['Action']))
+	{?>
+	   // Replace the <textarea id="content"> with a CKEditor
+      // instance, using default configuration.
+      CKEDITOR.replace('content');	
+    
+	  <?php
+	   if(($_GET['Action']=='Edit')&&($_GET['aid']>0))
+       {?>		   
+		$("#deleteImage").click(function(){		
+		  $.ajax({
+			  url:"ajax/deleteImage.php",
+			  type: "POST",
+			  data:"articleId=<?php echo $_GET['aid'];?>",
+			  success:function(result){
+			  $("#imageDiv").html(result);
+			 }
+		  }); 
+		});
+	<?php
+	   }
+	}?>
 });
 </script>
 	
