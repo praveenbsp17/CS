@@ -198,11 +198,11 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 		<div class="box-body">
 			<div class="form-group">
 				<label for="exampleInputTitle">Title</label>
-				<input type="text" name="title" class="form-control" placeholder="Enter Title" value="<?php echo $title;?>" data-bv-notempty data-bv-notempty-message="Article Title is required">
+				<input id="articleTitle" type="text" name="title" class="form-control" placeholder="Enter Title" value="<?php echo $title;?>" data-bv-notempty data-bv-notempty-message="Article Title is required">
 			</div>
 			<div class="form-group">
 				<label for="exampleInputPageUrl">Page Url</label>
-				<input type="text" name="pageurl" class="form-control" placeholder="Page Url" value="<?php echo $pageUrl;?>" data-bv-notempty data-bv-notempty-message="page Url is required">
+				<input id="pageUrl" type="text" name="pageurl" class="form-control" placeholder="Page Url" value="<?php echo $pageUrl;?>" data-bv-notempty data-bv-notempty-message="page Url is required">
 			</div>	
 			<div class="form-group">
 				<label>Select</label>
@@ -407,6 +407,16 @@ $(function() {
 	   // Replace the <textarea id="content"> with a CKEditor
       // instance, using default configuration.
       CKEDITOR.replace('content');	
+	  
+	  // generating the url by using title
+	  $("#articleTitle").blur(function(){
+		 $fval = $(this).val()
+        .toLowerCase()
+        .replace(/ /g,'-')
+        .replace(/[^\w-]+/g,'')+".html";
+		
+		$("#pageUrl").val($fval);	
+	  });
     
 	  <?php
 	   if(($_GET['Action']=='Edit')&&($_GET['aid']>0))
