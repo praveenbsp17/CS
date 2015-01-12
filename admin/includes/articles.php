@@ -226,9 +226,9 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 					?>		
 				</select>
 			</div>
-			<div class="form-group">
+			<div id="contentDiv" class="form-group">
 				<label for="exampleInputContent">Content</label>
-				<textarea id="content" name="content" class="form-control" placeholder="Enter Article Content"><?php echo $content;?></textarea>
+				<textarea id="content" name="content" class="form-control" placeholder="Enter Article Content" data-bv-notempty data-bv-notempty-message="Article Content is required"><?php echo $content;?></textarea>
 			</div>
 			<div class="form-group">
 				<label for="exampleInputMetaKeywords">Meta Keywords</label>
@@ -279,7 +279,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
 				<input type="hidden" readonly="true" name="article_id" value="<?php echo $_GET['aid'];?>" />
 			<?php
 			}?>
-			<input type="submit" name="Submit" value="<?php echo $buttonText;?>" class="btn bg-olive btn-block">
+			<input id="submitButton" type="submit" name="Submit" value="<?php echo $buttonText;?>" class="btn bg-olive btn-block">
 		</div>
 	</form>
 	</div>
@@ -396,6 +396,23 @@ $(function() {
 	});
 	
 	$('#articlesForm').bootstrapValidator();
+	
+	// validating the content and submitting the form
+	$("#articlesForm").submit(function(){
+		if($("#content").val()!="")
+		{
+			$("#contentDiv").find(".help-block").attr("style","display:none");	
+		    $("#contentDiv").addClass("has-success");
+			return true;
+		}
+		else
+		{
+		  $("#contentDiv").find(".help-block").attr("style","");	
+		  $("#contentDiv").addClass("has-error");
+		  return false;
+		}		
+	});
+	
 	$("#addButton").click(function(){
 	  var url = $(location).attr('href')+'&Action=Add';
 	  $(location).attr('href',url)
@@ -415,8 +432,38 @@ $(function() {
         .replace(/ /g,'-')
         .replace(/[^\w-]+/g,'')+".html";
 		
-		$("#pageUrl").val($fval);	
+		$("#pageUrl").val($fval);
+        $('#articlesForm').bootstrapValidator('updateStatus','pageurl','VALID').bootstrapValidator('validateField','pageurl');			
 	  });
+	  
+	  // on blur removing validation error for textarea
+	  var editor = CKEDITOR.instances['content'];
+		if (editor) {
+			editor.on('blur', function(event) {
+				// Do something
+				editor.updateElement();
+				var content = $("#content").val().replace(/(<([^>]+)>)/ig,"");
+				 if (content!="" && content != "&nbsp;")
+				 {
+					 $("#contentDiv").find(".help-block").attr("style","display:none");	
+					if($("#contentDiv").hasClass("has-error"))
+					{
+					  $("#contentDiv").removeClass("has-error")	
+					}	
+					$("#contentDiv").addClass("has-success"); // The action that you would like to call onChange
+					if(($('#articlesForm').data('bootstrapValidator').isValid()) && (typeof $("#submitButton") !== typeof undefined && $("#submitButton") !== false))
+					{
+						$('#articlesForm').bootstrapValidator('disableSubmitButtons', false);		
+					}
+				}
+				else{
+					 $("#contentDiv").find(".help-block").attr("style","");	
+					 $("#contentDiv").addClass("has-error");
+					 $('#articlesForm').bootstrapValidator('disableSubmitButtons', true);		
+				}
+			});
+        }   
+	  
     
 	  <?php
 	   if(($_GET['Action']=='Edit')&&($_GET['aid']>0))
