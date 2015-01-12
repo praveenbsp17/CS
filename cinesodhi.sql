@@ -1,13 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.12
+-- version 3.5.2.2
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 24, 2014 at 07:17 AM
--- Server version: 5.5.36
--- PHP Version: 5.4.27
+-- Generation Time: Jan 12, 2015 at 02:09 PM
+-- Server version: 5.5.27
+-- PHP Version: 5.4.7
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
@@ -58,17 +58,25 @@ CREATE TABLE IF NOT EXISTS `articles` (
   `meta_description` longtext NOT NULL,
   `article_title` varchar(250) NOT NULL,
   `article_content` longtext NOT NULL,
-  `category` int(11) unsigned NOT NULL,
-  `article_img` varchar(150) NOT NULL,
+  `category` varchar(150) DEFAULT NULL,
+  `article_img` varchar(150) DEFAULT NULL,
   `status` tinyint(1) NOT NULL,
   `created_by` int(11) unsigned NOT NULL,
-  `modified_by` int(11) unsigned NOT NULL,
+  `modified_by` int(11) unsigned DEFAULT NULL,
   `created_date` datetime NOT NULL,
-  `modified_date` datetime NOT NULL,
+  `modified_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `created_by` (`created_by`),
   KEY `modified_by` (`modified_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+
+--
+-- Dumping data for table `articles`
+--
+
+INSERT INTO `articles` (`id`, `page_url`, `meta_keywords`, `meta_description`, `article_title`, `article_content`, `category`, `article_img`, `status`, `created_by`, `modified_by`, `created_date`, `modified_date`) VALUES
+(5, 'allu-arjun-back-from-holiday.html', 'Allu Arjun back from holiday', 'Allu Arjun back from holiday', 'Allu Arjun back from holiday', '<p>Allu Arjun returned to the city on Sunday morning from South Africa after celebrating New Year&rsquo;s Eve there. His untitled film with director Trivikram Srinivas started its final schedule on Tuesday.</p>\r\n\r\n<p>&ldquo;This was a much-needed break and the actor enjoyed some quality time with his family, especially his son. Now, he wants to concentrate on the film,&rdquo; says a source.</p>\r\n\r\n<p>The shooting will take place around Hyderabad and the director is planning to can some important scenes. Allu Arjun plays a wedding planner in the film, which also stars Samantha, Adah Sharma and Nithya Menon.</p>\r\n\r\n<p>Samantha plays the main female lead. K. Radhakrishna is producing this film, while Kannada actor Upendra and Rajendra Prasad both have important roles in the film.</p>\r\n', 'Movies', 'aa_1420792687_1420801693.jpg', 1, 1, 1, '2015-01-09 09:38:07', '2015-01-09 12:08:13'),
+(6, 'HC-stays-release-of-film-I-till-january-30th.html', 'HC stays release of film ''I'' till January 30th', 'HC stays release of film ''I'' till January 30th', 'HC stays release of film ''I'' till January 30th', '<p><strong>Chennai:</strong>&nbsp; Madras(Tamil Nadu) High Court today stayed the release of multi-crore Tamil film by Director Shankar and starring Vikram and Emy Jackson, slated for January 15, till January 30 on a petition alleging violation of agreements by the producers. Justice R Mahadevan granted the interim injunction on a petition by city-based Picturehouse Media Limited alleging violation of financial and commercial agreements between it and producers Aascar Films (Private) Ltd.</p>\r\n\r\n<p>The judge restrained Aascar Films Private Limited, its Directors V Ravichandran and D Ramesh Babu, besides Reliance Mediaworks Limited, from releasing the film till January 30 in any format and asked the litigating parties to settle the issues by arbitration in the meanwhile. He issued notices to the producers and directed them to file their response by then. The producers, distributors, film laboratories and digital projection services &quot;are hereby restrained by an order of interim injunction till January 30, 2015 from releasing the movie in theatres all over the country, and outside India,&quot; the Judge said in his order.</p>\r\n\r\n<p>The applicant had claimed violation of commercial and financial agreements between it and Aascar Films and wanted the matter to be settled by arbitration.</p>\r\n', 'Movies', 'i_1420787613_1420794972.jpg', 1, 1, 1, '2015-01-09 09:40:13', '2015-01-09 10:16:48');
 
 -- --------------------------------------------------------
 
