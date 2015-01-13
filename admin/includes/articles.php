@@ -14,7 +14,9 @@ if(isset($_POST['title']) && isset($_POST['pageurl']) && isset($_POST['category'
 	    $nwarr['article_content'] = $_POST['content'];		
 		$nwarr['meta_keywords'] = $_POST['metaKeywords'];
 		$nwarr['meta_description'] = $_POST['metaDesc'];
-		
+		$nwarr['modified_date'] = date('Y-m-d H:i:s');
+		$nwarr['modified_by'] = $_SESSION['aid'];	
+			
 		// image uploading
 		$imgError = '';			
 		if(isset($_FILES["articleImg"]["name"]) && $_FILES["articleImg"]["name"]!="")
@@ -61,9 +63,6 @@ if(isset($_POST['title']) && isset($_POST['pageurl']) && isset($_POST['category'
 		// checking whether the articles added updated
 		if(isset($_POST['article_id']) && $_POST['article_id']!="")
 		{
-			$nwarr['modified_date'] = date('Y-m-d H:i:s');
-			$nwarr['modified_by'] = $_SESSION['aid'];		
-			$action = 'Edit';
 			$wcon = " where id = ".$_POST['article_id'];
 			$lid=$Database->Update($nwarr,"articles",$wcon);
 			header("location: index.php?op=articles&sucess=yes&ierror=".$imgError);
@@ -71,7 +70,7 @@ if(isset($_POST['title']) && isset($_POST['pageurl']) && isset($_POST['category'
 		else
 		{
 			$nwarr['created_date'] = date('Y-m-d H:i:s');
-			$nwarr['created_by'] = $_SESSION['aid'];		
+			$nwarr['created_by'] = $_SESSION['aid'];
 			$nwarr['status'] = 1;
 			$lid=$Database->insertuser($nwarr,"articles");
 			if($lid>0)
@@ -122,7 +121,7 @@ if((isset($_GET['Action']))&&(($_GET['Action']=='Add')||($_GET['Action']=='Edit'
   {
 	 $articles = $Database->fetch_values("select * from articles where id = '".$_GET['aid']."'");
 	 $articlesData = array_shift($articles);
-	 $heading = 'Edit Articles Details';
+	 $heading = 'Edit Article Details';
 	 $buttonText = 'Save';
 	 $title = $articlesData['article_title'];
 	 $pageUrl = $articlesData['page_url'];
@@ -313,13 +312,16 @@ else
 				  <th>Title</th>
 				  <th>Category</th>
 				  <th>Created Date</th>
+				  <th>Created By</th>
+				  <th>Modified Date</th>
+				  <th>Modified By</th>
 				  <th>Status</th>
 				  <th>Action</th>
 				</tr>
 			</thead>
 			<tbody>
 			<?php
-			 $articles =$Database->fetch_values("select * from articles ORDER BY id asc");
+			 $articles =$Database->fetch_values("select ac.*,c.username as createdBy, m.username as modifiedBy from articles ac,admin c, admin m where ac.created_by = c.id and ac.modified_by = m.id ORDER BY ac.id asc");
 			 if(count($articles) > 0)
 			 {
 			    $i=1;
@@ -350,6 +352,9 @@ else
 					  <td><?php echo $article['article_title'];?></td>
 					  <td><?php echo $article['category'];?></td>
 					  <td><?php echo date("d-m-Y H:i:s",strtotime($article['created_date']));?></td>
+					  <td><?php echo $article['createdBy'];?></td>
+					  <td><?php echo date("d-m-Y H:i:s",strtotime($article['modified_date']));?></td>
+					  <td><?php echo $article['modifiedBy'];?></td>
 					  <td>
 					  <a title="Change Status" data-placement="bottom" data-toggle="tooltip" href='index.php?op=articles&aid=<?=$article['id']?>&status=<?php echo $sval;?>'>					  
 					  <?php echo $status;?>
@@ -358,15 +363,9 @@ else
 					  <td>
 					  <a title="Edit Article" data-placement="bottom" data-toggle="tooltip" href='index.php?op=articles&Action=Edit&aid=<?=$article['id']?>'>
 					  <i class="fa fa-pencil-square-o fa-lg"></i></a>
-					  <?php
-					  if($article['id']>1)
-					  {?>					  
 					  &nbsp;
 					  <a title="Remove Article" data-placement="bottom" data-toggle="tooltip" href='index.php?op=articles&Action=Delete&aid=<?=$article['id']?>' onclick="return confirm('Are you sure')">
-					  <i class="fa fa-times fa-lg"></i></a>
-					  <?php
-					  }
-					  ?>
+					  <i class="fa fa-times fa-lg"></i></a>					  
 				    </td>
 					</tr>
 			 
