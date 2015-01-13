@@ -25,6 +25,16 @@
                                 <i class="fa fa-arrow-circle-right"></i> <span>Articles</span> 
                             </a>
                         </li>
+						<li <?php if($_GET['op'] == 'gallery') { ?>class="active" <?php } ?>>
+                            <a href="index.php?op=gallery">
+                                <i class="fa fa-arrow-circle-right"></i> <span>Gallery</span> 
+                            </a>
+                        </li>
+						<li <?php if($_GET['op'] == 'videos') { ?>class="active" <?php } ?>>
+                            <a href="index.php?op=videos">
+                                <i class="fa fa-arrow-circle-right"></i> <span>Videos</span> 
+                            </a>
+                        </li>
 						<li <?php if($_GET['op'] == 'polls') { ?>class="active" <?php } ?>>
                             <a href="index.php?op=polls">
                                 <i class="fa fa-arrow-circle-right"></i> <span>Polls</span> 
