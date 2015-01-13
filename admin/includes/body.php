@@ -23,6 +23,24 @@
 					$pageHeading = 'Articles';
 					$b1Title = 'Articles';
 					break;
+					case 'gallery':
+					$pageHeading = 'Gallery';
+					$b1Title = 'Gallery';
+					break;
+					case 'gallery_Images':
+					$gallery =$Database->fetch_values("select * from gallery where id = '".$_GET['gid']."'");
+			        if(count($gallery) > 0)
+			        {
+					  $pageHeading = $gallery[0]['gallery_title'];
+					  $b1Title = 'Gallery';
+					  $b2Title = $pageHeading;
+					  $op = 'gallery';	
+					}					
+					break;
+					case 'videos':
+					$pageHeading = 'videos';
+					$b1Title = 'videos';
+					break;
 					case 'polls':
 					$pageHeading = 'Polls';
 					$b1Title = 'Polls';
