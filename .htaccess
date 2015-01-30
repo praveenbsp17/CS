@@ -1,3 +1,8 @@
+Options +FollowSymlinks
 RewriteEngine On
-RewriteRule ^index\.php$ / [R=301,L]
-RewriteRule ^(.*)/index\.php$ /$1/ [R=301,L]
+RewriteCond %{HTTP_HOST} ^localhost/Pratice/ [NC]
+RewriteRule ^(.*)$ http://localhost/Pratice/$1 [R=301,NC]
+RewriteRule ^index.html$ http://localhost/Pratice/ [R=301,L]
+RewriteRule ^index.php$ http://localhost/Pratice/ [R=301,L]
+RewriteRule ^Gallery/$ http://localhost/Pratice/ [R=301,L]
+RewriteRule ^Gallery/(.*)$ http://localhost/Pratice/admin/ [R=301,L]
